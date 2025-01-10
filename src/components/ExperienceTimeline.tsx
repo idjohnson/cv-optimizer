@@ -1,13 +1,38 @@
+import { useEffect, useState } from "react";
 import { Experience } from "@/types/resume";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface ExperienceTimelineProps {
-  experiences: Experience[];
+  jsonUrl: string;
 }
 
-export const ExperienceTimeline = ({ experiences }: ExperienceTimelineProps) => {
+export const ExperienceTimeline = ({ jsonUrl }: ExperienceTimelineProps) => {
+  const [experiences, setExperiences] = useState<Experience[] | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(jsonUrl)
+      .then((response) => response.json())
+      .then((data) => {
+        setExperiences(data.experiences);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching experiences:", error);
+        setLoading(false);
+      });
+  }, [jsonUrl]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!experiences) {
+    return <div>No experiences available.</div>;
+  }
+
   return (
     <div className="relative pl-8 md:pl-16">
       <div className="timeline-connector" />

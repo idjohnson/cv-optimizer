@@ -9,5 +9,6 @@ RUN npm run build
 FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY src/data/experiences.json /usr/share/nginx/html/experiences.json
 EXPOSE 3000
 CMD ["nginx", "-g", "daemon off;"]
